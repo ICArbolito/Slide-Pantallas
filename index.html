@@ -13,11 +13,11 @@
             box-sizing: border-box;
         }
         body {
-            background-color: #ffffff; /* Blanco de base */
+            background-color: #ffffff;
             font-family: 'Rubik', sans-serif;
             width: 100vw;
             height: 100vh;
-            overflow: hidden; /* Evita barras de scroll */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,7 +26,7 @@
             width: 100%;
             height: 100%;
             position: relative;
-            background-color: #ececec; /* Gris claro de fondo por si la imagen no llena todo */
+            background-color: #ececec;
         }
         .slide {
             position: absolute;
@@ -34,16 +34,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-size: contain; /* Contain evita que se corten los bordes. Si prefieres que llene todo aunque corte, usa 'cover' */
+            background-size: contain; 
             background-position: center;
             background-repeat: no-repeat;
             opacity: 0;
-            transition: opacity 1s ease-in-out; /* Transición suave de 1 segundo */
+            transition: opacity 1s ease-in-out;
         }
         .slide.active {
             opacity: 1;
         }
-        /* Tu firma visual estática en la esquina */
         .branding {
             position: absolute;
             bottom: 20px;
@@ -56,13 +55,13 @@
         .seal {
             font-size: 28px;
             font-weight: 700;
-            color: #29903B; /* Tu verde */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4); /* Sombrita para que se lea sobre cualquier imagen */
+            color: #29903B; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4); 
         }
         .brand {
             font-size: 16px;
             font-weight: 400;
-            color: #0669FE; /* Tu azul */
+            color: #0669FE; 
             text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
         }
     </style>
@@ -73,15 +72,15 @@
         <!-- JS inyectará las imágenes aquí -->
     </div>
     
-    <!-- El sello de tus proyectos -->
     <div class="branding">
         <div class="seal">Baalam</div>
         <div class="brand">Inteligencia Comercial</div>
     </div>
 
     <script>
-        // ¡REEMPLAZA ESTA LÍNEA CON LA URL DE TU APPS SCRIPT!
-        const apiURL = 'https://script.google.com/macros/s/AKfycbweCUTqUiQW-DZuYEN8R2gUe7xWBdh619P67YRIpJi-sdfAcfa_WZsAL-RNRQcsCK8d/exec';        
+        // URL de producción de Google Apps Script ya integrada
+        const apiURL = 'https://script.google.com/macros/s/AKfycbweCUTqUiQW-DZuYEN8R2gUe7xWBdh619P67YRIpJi-sdfAcfa_WZsAL-RNRQcsCK8d/exec';
+        
         let slidesData = [];
         let currentIndex = 0;
         let container = document.getElementById('carousel-container');
@@ -96,7 +95,7 @@
                 }
             } catch (error) {
                 console.error("Error conectando con Sheets: ", error);
-                setTimeout(fetchImages, 15000); // Reintenta en 15 seg si falla
+                setTimeout(fetchImages, 15000); 
             }
         }
 
@@ -111,28 +110,26 @@
         }
 
         function startCarousel() {
-            if (slidesData.length <= 1) return; // Si solo hay 1 imagen, se queda fija
+            if (slidesData.length <= 1) return;
 
             const showNextSlide = () => {
                 const slides = document.querySelectorAll('.slide');
+                if (slides.length === 0) return;
+
                 slides[currentIndex].classList.remove('active');
                 
                 currentIndex = (currentIndex + 1) % slides.length;
                 
                 slides[currentIndex].classList.add('active');
                 
-                // Llama a la siguiente imagen usando el tiempo específico de esa imagen
                 setTimeout(showNextSlide, slidesData[currentIndex].duration);
             };
 
-            // Arranca el ciclo con la duración de la primera imagen
             setTimeout(showNextSlide, slidesData[0].duration);
         }
 
-        // Pide los datos a Sheets cada hora por si cambiaste algo, así Yodeck no tiene que reiniciarse
         setInterval(fetchImages, 3600000);
 
-        // Arranca al abrir la página
         fetchImages();
     </script>
 </body>
