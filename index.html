@@ -38,11 +38,12 @@
             background-repeat: no-repeat;
             opacity: 0;
             transform: scale(1);
-            transition: opacity 1s ease-in-out, transform 40s linear; 
+            /* Transición fluida de desvanecimiento */
+            transition: opacity 1s ease-in-out, transform 20s linear; 
         }
         .slide.active {
             opacity: 1;
-            transform: scale(1.05); /* Zoom sutil adaptado a los 40 segundos */
+            transform: scale(1.04); /* Zoom sutil continuo */
         }
         .branding {
             position: absolute;
@@ -78,11 +79,8 @@
     </div>
 
     <script>
-        // Tu URL de producción de Google Apps Script
-        const apiURL = 'https://script.google.com/macros/s/AKfycbwlct8NOwndSkUHFQ7IGxYwiF3D_5PEKfOkj9DuOW1QIUPsSZImo2xkjwuvio4bHbY/exec';
-        
-        // REGLA FIJA: 40 segundos por diapositiva (40000 milisegundos)
-        const SLIDE_DURATION = 40000; 
+        // URL de producción de Google Apps Script
+        const apiURL = 'https://script.google.com/macros/s/AKfycbweCUTqUiQW-DZuYEN8R2gUe7xWBdh619P67YRIpJi-sdfAcfa_WZsAL-RNRQcsCK8d/exec';
         
         let slidesData = [];
         let currentIndex = 0;
@@ -94,12 +92,12 @@
                 const response = await fetch(apiURL);
                 const newData = await response.json();
                 
-                // Si hay cambios en los datos o imágenes nuevas, actualiza el carrusel sin parpadear
+                // Si hay imágenes nuevas o cambios, actualiza la lista sin parpadear
                 if (JSON.stringify(newData) !== JSON.stringify(slidesData)) {
                     slidesData = newData;
                     if(slidesData.length > 0) {
                         renderSlides();
-                        // Si el carrusel no ha empezado, lo arranca
+                        // Si el carrusel no está corriendo, lo inicia
                         if (!carouselTimeout && slidesData.length > 1) {
                             startCarousel();
                         }
@@ -111,7 +109,6 @@
         }
 
         function renderSlides() {
-            // Guarda cuál estaba activa para no romper la transición visual al actualizar datos
             const activeSlideSrc = slidesData[currentIndex] ? slidesData[currentIndex].url : null;
             
             container.innerHTML = '';
@@ -134,17 +131,22 @@
                 currentIndex = (currentIndex + 1) % slides.length;
                 slides[currentIndex].classList.add('active');
                 
-                // Agenda la siguiente transición exactamente a los 40 segundos
-                carouselTimeout = setTimeout(showNextSlide, SLIDE_DURATION);
+                // DINÁMICO: Lee la duración específica de esta diapositiva que viene desde tu Sheet
+                // Si por alguna razón está vacío, usa 40 segundos por defecto
+                let currentDuration = slidesData[currentIndex].duration || 40000;
+                
+                carouselTimeout = setTimeout(showNextSlide, currentDuration);
             };
 
-            carouselTimeout = setTimeout(showNextSlide, SLIDE_DURATION);
+            // Arranca el ciclo con el tiempo específico de la primera diapositiva
+            let firstDuration = slidesData[0].duration || 40000;
+            carouselTimeout = setTimeout(showNextSlide, firstDuration);
         }
 
-        // DETECCIÓN AUTOMÁTICA: Revisa el Sheet silenciosamente cada 5 minutos (300000 ms)
+        // DETECCIÓN AUTOMÁTICA: Sigue revisando tu Sheet cada 5 minutos (300000 ms) por si hay fotos nuevas
         setInterval(fetchImages, 300000);
 
-        // Carga inicial al abrir la pantalla
+        // Carga inicial
         fetchImages();
     </script>
 </body>
