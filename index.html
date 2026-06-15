@@ -74,13 +74,14 @@
         </div>
     
     <div class="branding">
-        <div class="seal"></div>
-        <div class="brand"></div>
+        <div class="seal">Baalam</div>
+        <div class="brand">Inteligencia Comercial</div>
     </div>
 
     <script>
-        // URL de producción de Google Apps Script
-        https://script.google.com/macros/s/AKfycbzr-BRWTSwutxaywkVDvUaFQ_S9BpG8vO4wWnnJeBZo6pfnvAzSySzY-W2i7qhzDyv_/exec        
+        // URL de producción de Google Apps Script (CORREGIDO)
+        const apiURL = 'https://script.google.com/macros/s/AKfycbzr-BRWTSwutxaywkVDvUaFQ_S9BpG8vO4wWnnJeBZo6pfnvAzSySzY-W2i7qhzDyv_/exec';
+        
         let slidesData = [];
         let currentIndex = 0;
         let container = document.getElementById('carousel-container');
@@ -131,7 +132,6 @@
                 slides[currentIndex].classList.add('active');
                 
                 // DINÁMICO: Lee la duración específica de esta diapositiva que viene desde tu Sheet
-                // Si por alguna razón está vacío, usa 40 segundos por defecto
                 let currentDuration = slidesData[currentIndex].duration || 40000;
                 
                 carouselTimeout = setTimeout(showNextSlide, currentDuration);
@@ -142,7 +142,7 @@
             carouselTimeout = setTimeout(showNextSlide, firstDuration);
         }
 
-        // DETECCIÓN AUTOMÁTICA: Sigue revisando tu Sheet cada 5 minutos (300000 ms) por si hay fotos nuevas
+        // DETECCIÓN AUTOMÁTICA: Sigue revisando tu Sheet cada 5 minutos
         setInterval(fetchImages, 300000);
 
         // Carga inicial
